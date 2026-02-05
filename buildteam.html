@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Game UI Fullscreen</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://code.jquery.com/jquery-4.0.0.slim.js"
+      integrity="sha256-M+GjhMBfXikM1izMplICCTscIj5hzPCp6uDzaypxtgg="
+      crossorigin="anonymous"
+    ></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <div class="game-screen">
+      <div class="floor-grid"></div>
+
+      <div class="header">
+        <div class="header-left"><span>☠</span> Порядок</div>
+        <div class="header-center">
+          <span>🔥</span> Рэиацу <span style="color: #d32f2f">654 481 717</span>
+        </div>
+        <div class="header-right-btn">❮</div>
+      </div>
+
+      <div class="sidebar-left">
+        <div class="menu-btn"><span>Порядок</span></div>
+        <div class="menu-btn"><span>Альбом</span></div>
+        <div class="menu-btn"><span>Узы</span></div>
+        <div class="menu-btn"><span>Трениров.</span></div>
+      </div>
+
+      <div class="stage">
+        <div class="character-card">
+          <div
+            class="char-model"
+            style="background-image: url('images/card-background.webp')"
+          >
+            <div class="card-top" style="background-image: url('images/aizen-arrancar/aizen-arrancar-sm.png');"></div>
+            <div class="card-bottom">
+            </div>
+          </div>
+          <div class="config-btn">Настроить</div>
+          <div class="char-info role-attack">
+            <h3>Айзен - Арранкар</h3>
+            <p>Новолуние</p>
+          </div>
+          <div class="swap-icon">↻</div>
+        </div>
+
+        <div class="character-card">
+          <div
+            class="char-model"
+            style="background-image: url('images/card-background.webp')"
+          ></div>
+          <div class="config-btn">Настроить</div>
+          <div class="char-info role-skill">
+            <h3>Айзен · SP</h3>
+            <p>Главный</p>
+          </div>
+          <div class="swap-icon">↻</div>
+        </div>
+
+        <div class="character-card">
+          <div
+            class="char-model"
+            style="background-image: url('images/card-background.webp')"
+          ></div>
+          <div class="config-btn">Настроить</div>
+          <div class="char-info role-defense">
+            <h3>Харрибел</h3>
+            <p>Помощь</p>
+          </div>
+          <div class="swap-icon">↻</div>
+        </div>
+
+        <div class="character-card">
+          <div
+            class="char-model"
+            style="background-image: url('images/card-background.webp')"
+          ></div>
+          <div class="config-btn">Настроить</div>
+          <div class="char-info role-attack">
+            <h3>Лиза</h3>
+            <p>Оборона</p>
+          </div>
+          <div class="swap-icon">↻</div>
+        </div>
+
+        <div class="character-card">
+          <div
+            class="char-model"
+            style="background-image: url('images/card-background.webp')"
+          ></div>
+          <div class="config-btn">Настроить</div>
+          <div class="char-info role-defense">
+            <h3>Харрибел</h3>
+            <p>Помощь</p>
+          </div>
+          <div class="swap-icon">↻</div>
+        </div>
+
+        <div class="character-card">
+          <div
+            class="char-model"
+            style="background-image: url('images/card-background.webp')"
+          ></div>
+          <div class="config-btn">Настроить</div>
+          <div class="char-info role-defense">
+            <h3>Харрибел</h3>
+            <p>Помощь</p>
+          </div>
+          <div class="swap-icon">↻</div>
+        </div>
+      </div>
+
+      <div class="sidebar-right">
+        <div class="hero-thumb">
+          <img src="https://via.placeholder.com/100" alt /><span>8/8</span>
+        </div>
+        <div class="hero-thumb">
+          <img src="https://via.placeholder.com/100" alt /><span>4/4</span>
+        </div>
+        <div class="hero-thumb">
+          <img src="https://via.placeholder.com/100" alt /><span>3/3</span>
+        </div>
+        <div class="hero-thumb">
+          <img src="https://via.placeholder.com/100" alt /><span>4/4</span>
+        </div>
+        <div class="hero-thumb">
+          <img src="https://via.placeholder.com/100" alt /><span>8/8</span>
+        </div>
+        <div class="hero-thumb">
+          <img src="https://via.placeholder.com/100" alt /><span>2/8</span>
+        </div>
+      </div>
+
+      <div class="attribute-wheel">
+        <div class="attribute-center">?</div>
+      </div>
+
+      <div class="footer-action">
+        <div class="battle-btn">
+          <span>БОЕВОЙ СТРОЙ ➦</span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
