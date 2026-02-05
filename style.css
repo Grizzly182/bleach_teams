@@ -185,21 +185,21 @@ body {
     display: flex;
     justify-content: flex-start;
     gap: 3vw;
-    align-items: flex-end;
+    align-items: center;
     z-index: 50;
     
+    padding-left: 10vw;
     overflow-x: auto;     
     padding-right: 10vw;  
     
     scrollbar-width: none; 
     -ms-overflow-style: none;
 }
-
 .stage::-webkit-scrollbar { display: none; }
 
 .character-card {
-    flex: 0 0 329px;
-    height: 100%;
+    flex: 1 0 329px;
+    height: auto;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -225,11 +225,6 @@ body {
     background-image: url('images/card-background.webp');
     align-content: flex-end;
 }
-/* 
-.card-bottom {
-    width: 100%;
-    background-color:black;
-} */
 
 .card-top {
     background-repeat: no-repeat;
@@ -238,8 +233,23 @@ body {
     padding: 0 6px 93px 6px;
 }
 
+.empty-character-card {
+    flex: 1 0 329px;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.empty-character-card img {
+    width: 50%;
+    margin: 0 auto;
+}
+
 .config-btn {
-    background: #f97316;
+    background: #555454;
     color: white;
     border: 2px solid #fff;
     padding: 0.5vh 1vw;
