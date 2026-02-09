@@ -1,10 +1,41 @@
 :root {
-    --scale: 0.9; 
-    
+    --scale: 0.4;
+
     --base-width: calc(379px * var(--scale));
-    --gold-light: #ffe08a;
     --dark-panel: #1a1e24;
-    --accent-red: #ff3e3e;
+    --main: #ef4444;
+    --support: #f59e0b;
+    --defense: #6325f5;
+}
+
+@media (min-width: 1920px) {
+    :root {
+        --scale: 0.9;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1919px) {
+    :root {
+        --scale: 0.8;
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1199px) {
+    :root {
+        --scale: 0.7;
+    }
+}
+
+@media (min-width: 600px) and (max-width: 899px) {
+    :root {
+        --scale: 0.4;
+    }
+}
+
+@media (max-width: 599px) and (max-device-width: 599px) {
+    :root {
+        --scale: 0.4;
+    }
 }
 
 * {
@@ -91,12 +122,19 @@ body {
     margin-top: 5px;
 }
 
-.header-right-btn {
+.right-sidebar-toggle {
+    position: fixed;
+    right: 12px;
+    top: 20px;
+    z-index: 100;
     color: white;
-    font-size: 3vh;
+
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    font-size: 22px;
     cursor: pointer;
-    margin-top: 5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .sidebar-left {
@@ -135,17 +173,45 @@ body {
 }
 
 .sidebar-right {
-    position: absolute;
-    right: 1vw;
-    top: 15vh;
-    bottom: 15vh;
-    width: clamp(60px, 5vw, 90px);
+    position: fixed;
+    height: 100%;
+    right: 0;
+    justify-content: center;
+
+    z-index: 90;
+    
     display: flex;
     flex-direction: column;
+    width: clamp(30px, 5vw, 90px);
     gap: 1.5vh;
-    overflow-y: auto;
-    z-index: 90;
-    scrollbar-width: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar-right {
+        position: fixed;
+        height: 100%;
+        right: 0;
+
+        transform: translateX(110%);
+        transition: transform 0.3s ease;
+
+        z-index: 90;
+
+        display: flex;
+        flex-direction: column;
+        width: clamp(60px, 5vw, 90px);
+        gap: 1.5vh;
+    }
+
+    .sidebar-right.open {
+        transform: translateX(0);
+    }
+}
+
+@media (min-width: 768px) {
+    .right-sidebar-toggle {
+        visibility: hidden;
+    }
 }
 
 .sidebar-right::-webkit-scrollbar {
@@ -160,13 +226,7 @@ body {
     border: 2px solid white;
     position: relative;
     overflow: hidden;
-    cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    transition: transform 0.2s;
-}
-
-.hero-thumb:hover {
-    transform: scale(1.1);
 }
 
 .hero-thumb img {
@@ -196,15 +256,18 @@ body {
     gap: 3vw;
     align-items: center;
     z-index: 50;
-    
+
     padding-left: 17vw;
-    overflow-x: auto;     
-    padding-right: 10vw;  
-    
-    scrollbar-width: none; 
+    overflow-x: auto;
+    padding-right: 10vw;
+
+    scrollbar-width: none;
     -ms-overflow-style: none;
 }
-.stage::-webkit-scrollbar { display: none; }
+
+.stage::-webkit-scrollbar {
+    display: none;
+}
 
 .empty-character-card {
     flex: 1 0 329px;
@@ -217,7 +280,7 @@ body {
 }
 
 .empty-character-card img {
-    width: 50%;
+    width: calc(200px * var(--scale));
     margin: 0 auto;
     transition: 0.2s;
     cursor: pointer;
@@ -231,18 +294,6 @@ body {
     font-size: clamp(10px, 1.4vh, 14px);
     opacity: 0.8;
     margin: 0;
-}
-
-.role-attack {
-    border-color: #ef4444;
-}
-
-.role-skill {
-    border-color: #8b5cf6;
-}
-
-.role-defense {
-    border-color: #f59e0b;
 }
 
 .swap-icon {
@@ -337,10 +388,11 @@ body {
 }
 
 .card-body {
+    position: relative;
     width: 100%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     background: #000;
-    overflow: hidden;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     background-image: url('images/card-background.webp');
@@ -381,7 +433,7 @@ body {
     top: 0;
     width: 30%;
     height: 100%;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0, 0, 0, 0.2);
     clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
 }
 
@@ -389,7 +441,7 @@ body {
     color: white;
     font-size: calc(4.7rem * var(--scale));
     font-weight: 500;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     z-index: 1;
     text-align: center;
 }
@@ -399,31 +451,69 @@ body {
     color: #fff;
     border: 1.5px solid #bbb;
     padding: calc(6px * var(--scale)) calc(20px * var(--scale));
-    font-size: calc(0.8rem * var(--scale));
+    font-size: calc(1.3rem * var(--scale));
     text-transform: uppercase;
     cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .info-panel {
     width: var(--base-width);
-    background: var(--dark-panel);
+    height: auto;
+    background: var(--dark-panel) !important;
     color: white;
-    padding: calc(10px * var(--scale)) calc(15px * var(--scale));
-    border-left: calc(5px * var(--scale)) solid var(--accent-red);
     clip-path: polygon(0 0, 100% 0, 92% 100%, 0% 100%);
+    display: flex;
+    flex-direction: column;
 }
 
 .name {
-    font-size: calc(1.1rem * var(--scale));
+    font-size: calc(1.5rem * var(--scale));
+    padding: calc(10px * var(--scale)) calc(15px * var(--scale));
     font-weight: bold;
     margin-bottom: 2px;
-    text-overflow:clip;
+    text-overflow: clip;
     white-space: nowrap;
     overflow: hidden;
 }
 
-.subtext {
-    font-size: calc(0.8rem * var(--scale));
-    color: #999;
+.position {
+    font-size: calc(1.2rem * var(--scale));
+    padding: calc(4px * var(--scale)) calc(16px * var(--scale));
+    position: relative;
+}
+
+.position-main {
+    background: var(--main);
+}
+
+.position-support {
+    background: var(--support);
+}
+
+.position-defense {
+    background: var(--defense);
+}
+
+.character-component .position-main {
+    border-left: calc(5px * var(--scale)) solid var(--main);
+}
+
+.character-component .position-support {
+    border-left: calc(5px * var(--scale)) solid var(--support);
+}
+
+.character-component .position-defense {
+    border-left: calc(5px * var(--scale)) solid var(--defense);
+}
+
+.class-icon {
+    position: absolute;
+    top: calc(-15px * var(--scale));
+    left: calc(-45px * var(--scale));
+    width: calc(90px * var(--scale));
+    height: auto;
+
+    z-index: 5;
+    pointer-events: none;
 }
