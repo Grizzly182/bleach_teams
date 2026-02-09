@@ -1,6 +1,6 @@
 const charactersData = {
   characters: [
-    new character(
+    new Character(
       id = "aizen-arrancar",
       name = "Айзен - Арранкар",
       img = "aizen-arrancar.png",
@@ -17,7 +17,7 @@ const charactersData = {
         { id: "white-day-aizen", type: "armor", value: 38 },
       ],
     ),
-    new character(
+    new Character(
       id = "ichigo-dangai",
       name = "Ичиго Куросаки - закалка",
       img = "ichigo-dangai.png",
