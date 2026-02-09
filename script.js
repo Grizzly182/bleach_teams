@@ -58,20 +58,39 @@ $().ready(() => {
 
     let charactersJson = charactersData;
 
-    function getCharacterCardHtml(id, bonds) {
+    function getCharacterCardHtml(characterId, bonds) {
+        const character = getCharacterById(characterId);
+        const characterName = character?.name || 'Character';
+        const characterImg = getCharacterImagePath(character);
+        const characterRarity = rarityToString(character);
+        const bondsHtml = bonds.map(bond => {
+            const bondCharacter = charactersJson.characters.find(c => c.id === bond.id);
+            const bondCharacterName = bondCharacter?.name || 'Character';
+            return `<div class="bond">${bondCharacterName}</div>`;
+        }).join('');
         return `
-            <div class="character-card" data-id="${id}">
-                <div class="char-model">
-                    <div class="card-top"><img src="images/characters/${charactersJson.characters.find(character => character.id === id)?.img}" alt="${id}" style="width: 100%; height: 100%; object-fit: contain"></div>
-                </div>
-                ${bonds.map(bond => `<div class="bond" data-id="${bond.id}" data-call-support="${bond.callSupport}"></div>`).join('')}
-                <div class="config-btn">Настроить</div>
-                <div class="char-info role-attack">
-                    <h3>${charactersJson.characters.find(character => character.id === id)?.name}</h3>
-                    <p>Новолуние</p>
-                </div>
-                <div class="swap-icon">↻</div>
-            </div>
+        <div class="character-component">
+    
+        <div class="card-body">
+        <div class="portrait-block">
+            <img src="${characterImg}" alt="${characterName}">
+        </div>
+        
+        <div class="tier-block">
+            <span class="tier-text">${characterRarity}</span>
+        </div>
+    </div>
+
+    <button class="setup-btn">Настроить</button>
+
+    <div class="info-panel">
+        <div class="name">${characterName}</div>
+        <div class="subtext">undefined</div>
+    </div>
+
+    <!--<div class="bonds">${bondsHtml}</div> -->
+
+</div>
         `;
     }
 
