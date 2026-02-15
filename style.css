@@ -402,6 +402,7 @@ body {
 }
 
 .tier-text {
+    width: 50%;
     color: white;
     font-size: 100cqh;
     font-weight: 500;
@@ -484,6 +485,7 @@ body {
 
 .swap-menu {
     position: fixed;
+    width: 350px * var(--scale);
     display: none;
     z-index: 1000;
 }

@@ -232,10 +232,11 @@ function renderSwapMenu() {
 
   function openMenu(character) {
     menu.style.display = "block";
+    $(".sidebar-left").hide();
 
     if (window.innerWidth > 768) {
       const rect = character.getBoundingClientRect();
-      const menuWidth = 350;
+      const menuWidth = 578;
 
       const spaceRight = window.innerWidth - rect.right;
       const spaceLeft = rect.left;
@@ -243,7 +244,7 @@ function renderSwapMenu() {
       if (spaceRight > spaceLeft) {
         menu.style.left = rect.right + 10 + "px";
       } else {
-        menu.style.left = rect.left - menuWidth - 10 + "px";
+        menu.style.left = rect.left - menuWidth - 20 + "px";
       }
 
       menu.style.top = rect.top + "px";
@@ -253,6 +254,7 @@ function renderSwapMenu() {
   function closeMenu() {
     menu.style.display = "none";
     currentCharacter = null;
+    $(".sidebar-left").show();
   }
 
   /* ==== Фильтрация ==== */
