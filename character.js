@@ -43,7 +43,7 @@ class Character {
   getImagePath() {
     return "images/characters/" + this.img;
   }
-
+  
   rarityToString() {
     switch (this.rarity) {
       case "SR":

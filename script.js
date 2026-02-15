@@ -13,34 +13,48 @@ const storedTeam = localStorage.getItem("team");
 const team = storedTeam
   ? JSON.parse(storedTeam)
   : {
-      support1: {
-        id: "ichigo-dangai",
-        bonds: [
-          { id: "aizen-arrancar", callSupport: false },
-          { id: "aizen-arrancar", callSupport: false },
-          { id: "aizen-arrancar", callSupport: false },
-        ],
-      },
-      main: {
-        id: "aizen-arrancar",
-        bonds: [
-          { id: "aizen-arrancar", callSupport: false },
-          { id: "aizen-arrancar", callSupport: false },
-          { id: "aizen-arrancar", callSupport: false },
-        ],
-      },
-      support2: null,
-      defense1: {
-        id: "aizen-arrancar",
-        bonds: [
-          { id: "aizen-arrancar", callSupport: false },
-          { id: "aizen-arrancar", callSupport: false },
-          { id: "aizen-arrancar", callSupport: false },
-        ],
-      },
-      defense2: null,
-      defense3: null,
-    };
+    support1: {
+      id: "ichigo-dangai",
+      bonds: [
+        { id: "aizen-arrancar", callSupport: false },
+        { id: "aizen-arrancar", callSupport: false },
+        { id: "aizen-arrancar", callSupport: false },
+      ],
+    },
+    main: {
+      id: "aizen-arrancar",
+      bonds: [
+        { id: "aizen-arrancar", callSupport: false },
+        { id: "aizen-arrancar", callSupport: false },
+        { id: "aizen-arrancar", callSupport: false },
+      ],
+    },
+    support2: null,
+    defense1: {
+      id: "aizen-arrancar",
+      bonds: [
+        { id: "aizen-arrancar", callSupport: false },
+        { id: "aizen-arrancar", callSupport: false },
+        { id: "aizen-arrancar", callSupport: false },
+      ],
+    },
+    defense2: {
+      id: "orihime",
+      bonds: []
+    },
+    defense3: null
+  };
+function getAllCharacters() {
+  return charactersData.characters;
+}
+
+function getAllCharactersCards() {
+  var cardsHtml = "";
+  for(character of charactersData.characters) {
+    cardsHtml += getCharacterCardHtml(character);
+  }
+  return cardsHtml;
+}
 
 function positionToString(position) {
   switch (position) {
@@ -76,11 +90,23 @@ function getPositionClass(position) {
   }
 }
 
-function getCharacterHtml(characterId, bonds, position) {
-  const character = getCharacterById(characterId);
+function getCharacterCardHtml(character) {
+
+  return `
+  <div class="card-body">
+    <img class="class-icon" src="${getCharacterClassImagePath(character)}">
+    <div class="portrait-block">
+        <img src="${character.getImagePath()}" alt="${character.name}">
+    </div>
+    
+    <div class="tier-block">
+        <span class="tier-text">${character.rarityToString()}</span>
+    </div>
+</div>`;
+}
+
+function getCharacterHtml(character, bonds, position) {
   const characterName = character?.name || "Character";
-  const characterImg = character.getImagePath();
-  const characterRarity = character.rarityToString();
   const bondsHtml = bonds
     .map((bond) => {
       const bondCharacter = charactersData.characters.find(
@@ -93,16 +119,7 @@ function getCharacterHtml(characterId, bonds, position) {
   return `
     <div class="character-component">
 
-    <div class="card-body">
-    <img class="class-icon" src="${getCharacterClassImagePath(character)}">
-    <div class="portrait-block">
-        <img src="${characterImg}" alt="${characterName}">
-    </div>
-    
-    <div class="tier-block">
-        <span class="tier-text">${characterRarity}</span>
-    </div>
-</div>
+    ${getCharacterCardHtml(character)}
 
 <button class="setup-btn">Настроить</button>
 
@@ -112,9 +129,15 @@ function getCharacterHtml(characterId, bonds, position) {
   )}</span>
     <div class="name">${characterName}</div>
 </div>
-
-<!--<div class="bonds">${bondsHtml}</div> -->
-
+    <div class="character-list" id="characterList">
+      <div class="tabs">
+        <button data-rarity="all" class="tab active">Все</button>
+        <button data-rarity="ssr" class="tab">SSR</button>
+        <button data-rarity="sr" class="tab">SR</button>
+        <button data-rarity="r" class="tab">R</button>
+      </div>
+      <div class="grid" id="grid">${getAllCharactersCards()}</div>
+    </div>
 </div>
     `;
 }
@@ -128,7 +151,7 @@ function renderTeamData() {
     }
     if (teamMember?.id) {
       const { id, bonds } = teamMember;
-      teamDataHtml += getCharacterHtml(id, bonds, position);
+      teamDataHtml += getCharacterHtml(getCharacterById(id), bonds, position);
     }
   }
   const stageElement = document.querySelector(".stage");
@@ -152,20 +175,20 @@ function getCharacterClassImagePath(character) {
   }
 }
 
-function renderRightSidebar(){
-    const sidebar = document.querySelector(".sidebar-right");
-    var sidebarHtml = "";
-    for (position in team) {
-      teamMember = team[position];
-      if (teamMember?.id) {
-        const { id, bonds } = teamMember;
-        const character = getCharacterById(id);
-        sidebarHtml += `<div class="hero-thumb">
+function renderRightSidebar() {
+  const sidebar = document.querySelector(".sidebar-right");
+  var sidebarHtml = "";
+  for (position in team) {
+    teamMember = team[position];
+    if (teamMember?.id) {
+      const { id, bonds } = teamMember;
+      const character = getCharacterById(id);
+      sidebarHtml += `<div class="hero-thumb">
           <img src="${character.getImagePath()}" alt="${id}" /><span>8/8</span>
         </div>`;
-      }
     }
-    sidebar.innerHTML = sidebarHtml;
+  }
+  sidebar.innerHTML = sidebarHtml;
 }
 
 $().ready(() => {
@@ -193,4 +216,45 @@ $().ready(() => {
 
   renderTeamData();
   renderRightSidebar();
+
+  const character = document.querySelector('.card-body')
+const list = document.getElementById('characterList')
+const wrapper = document.querySelector('.character-component')
+
+character.addEventListener('click', (e) => {
+  e.stopPropagation()
+  list.classList.toggle('open')
+
+  if (list.classList.contains('open')) {
+    positionList()
+  }
+})
+
+document.addEventListener('click', () => {
+  list.classList.remove('open')
+})
+
+if (window.innerWidth <= 768) {
+  character.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function positionList() {
+  if (window.innerWidth <= 768) {
+    return
+  }
+
+  list.style.left = '100%'
+  list.style.right = 'auto'
+  list.style.marginLeft = '12px'
+  list.style.marginRight = '0'
+
+  const rect = list.getBoundingClientRect()
+
+  if (rect.right > window.innerWidth) {
+    list.style.left = 'auto'
+    list.style.right = '100%'
+    list.style.marginLeft = '0'
+    list.style.marginRight = '12px'
+  }
+}
 });
