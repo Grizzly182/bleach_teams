@@ -1,3 +1,7 @@
+function getAllCharacters() {
+  return charactersData.characters;
+}
+
 const charactersData = {
   characters: [
     new Character(
