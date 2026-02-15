@@ -1,28 +1,20 @@
-class Team {
-  constructor() {
-    this.main = null;
-    this.support1 = null;
-    this.support2 = null;
-    this.defense1 = null;
-    this.defense2 = null;
-    this.defense3 = null;
-  }
-}
+var characterRoastr = getAvailableCharacters();
 
 const storedTeam = localStorage.getItem("team");
-const team = storedTeam
-  ? JSON.parse(storedTeam)
-  : {
+var team = checkTeamDuplicates(
+  storedTeam
+    ? JSON.parse(storedTeam)
+    : {
       support1: {
         id: "ichigo-dangai",
         bonds: [
-          { id: "aizen-arrancar", callSupport: false },
+          null,
           { id: "aizen-arrancar", callSupport: false },
           { id: "aizen-arrancar", callSupport: false },
         ],
       },
       main: {
-        id: "aizen-arrancar",
+        id: "hanataro",
         bonds: [
           { id: "aizen-arrancar", callSupport: false },
           { id: "aizen-arrancar", callSupport: false },
@@ -31,16 +23,103 @@ const team = storedTeam
       },
       support2: null,
       defense1: {
-        id: "aizen-arrancar",
+        id: "sado",
         bonds: [
           { id: "aizen-arrancar", callSupport: false },
           { id: "aizen-arrancar", callSupport: false },
           { id: "aizen-arrancar", callSupport: false },
         ],
       },
-      defense2: null,
+      defense2: {
+        id: "orihime",
+        bonds: [],
+      },
       defense3: null,
-    };
+    }
+);
+
+function checkTeamDuplicates(team) {
+  const usedIds = new Set();
+
+  Object.keys(team).forEach((position) => {
+    const slot = team[position];
+    if (!slot) return;
+
+    // Проверяем основной id слота
+    if (usedIds.has(slot.id)) {
+      team[position] = null; // удаляем весь слот
+      return;
+    }
+
+    usedIds.add(slot.id);
+
+    // Фильтруем bonds
+    slot.bonds = slot.bonds.filter((bond) => {
+      if (usedIds.has(bond?.id) || !bond) return false;
+      usedIds.add(bond.id);
+      return true;
+    });
+  });
+
+  return team;
+}
+
+function checkBondsCount(team) {
+  for (position in team) {
+    const teamMember = team[position];
+    if (!teamMember) {
+      continue;
+    }
+    if (teamMember?.id) {
+      const { id, bonds } = teamMember;
+      const character = getCharacterById(id);
+      if (bonds.length < character.maxBonds()) {
+        const bondsCount = character.maxBonds();
+        team[position].bonds = [...team[position].bonds, ...Array(bondsCount - bonds.length).fill(null)];
+      }
+    }
+  }
+
+  return team;
+}
+
+function updateTeam(team) {
+  //TODO: позже поменять на зашифрованую
+  team = checkTeamDuplicates(team);
+  team = checkBondsCount(team);
+  localStorage.setItem("team", JSON.stringify(team));
+}
+
+function getAvailableCharacters() {
+  const charactersList = [];
+  for (position in team) {
+    const teamMember = team[position];
+    if (!teamMember) {
+      continue;
+    }
+    if (teamMember?.id) {
+      const { id, bonds } = teamMember;
+      charactersList.push(id);
+      for (bond of bonds) {
+        if (bond) {
+          charactersList.push(bond.id);
+        }
+      }
+    }
+  }
+
+  const allCharacters = getAllCharacters();
+  const filteredCharacters = allCharacters.filter(character => !charactersList.includes(character.id));
+  return filteredCharacters;
+}
+
+function getAllCharactersCards() {
+  var cardsHtml = "";
+  for (character of charactersData.characters) {
+    cardsHtml += getCharacterCardHtml(character);
+  }
+  return cardsHtml;
+}
 
 function positionToString(position) {
   switch (position) {
@@ -76,33 +155,26 @@ function getPositionClass(position) {
   }
 }
 
-function getCharacterHtml(characterId, bonds, position) {
-  const character = getCharacterById(characterId);
-  const characterName = character?.name || "Character";
-  const characterImg = character.getImagePath();
-  const characterRarity = character.rarityToString();
-  const bondsHtml = bonds
-    .map((bond) => {
-      const bondCharacter = charactersData.characters.find(
-        (c) => c.id === bond.id
-      );
-      const bondCharacterName = bondCharacter?.name || "Not found";
-      return `<div class="bond">${bondCharacterName}</div>`;
-    })
-    .join("");
+function getCharacterCardHtml(character) {
   return `
-    <div class="character-component">
-
-    <div class="card-body">
+  <div class="card-body" ${character?.id ? `data-id="${character.id}"` : ""} ${character?.rarity ? `data-rarity="${character.rarityToString()}"` : ""}>
     <img class="class-icon" src="${getCharacterClassImagePath(character)}">
     <div class="portrait-block">
-        <img src="${characterImg}" alt="${characterName}">
+        <img src="${character.getImagePath()}" alt="${character.name}">
     </div>
     
     <div class="tier-block">
-        <span class="tier-text">${characterRarity}</span>
+        <span class="tier-text">${character.rarityToString()}</span>
     </div>
-</div>
+</div>`;
+}
+
+function getCharacterHtml(character, bonds, position) {
+  const characterName = character?.name || "Character";
+  return `
+    <div class="character-component" data-position="${position}">
+
+    ${getCharacterCardHtml(character)}
 
 <button class="setup-btn">Настроить</button>
 
@@ -112,14 +184,118 @@ function getCharacterHtml(characterId, bonds, position) {
   )}</span>
     <div class="name">${characterName}</div>
 </div>
-
-<!--<div class="bonds">${bondsHtml}</div> -->
-
 </div>
     `;
 }
 
-function renderTeamData() {
+function renderSwapMenu() {
+  const swapMenuHtml = `
+    <div class="swap-menu" id="swapMenu">
+      <div class="menu-content">
+      <div class="menu-title">Заменить</div>
+        <div class="tabs">
+          <button data-filter="all" class="tab active">Все</button>
+          <button data-filter="SSR" class="tab">SSR</button>
+          <button data-filter="SR" class="tab">SR</button>
+          <button data-filter="R" class="tab">R</button>
+        </div>
+        <div class="menu-grid">
+          ${getAvailableCharacters().map(getCharacterCardHtml).join("")}
+        </div>
+      </div>
+    </div>
+    `;
+
+  const stageElement = document.querySelector(".stage");
+  stageElement.innerHTML += swapMenuHtml;
+
+  const characters = document.querySelectorAll(".character-component")
+  const menu = document.getElementById("swapMenu");
+  const tabs = document.querySelectorAll(".tab");
+  const cards = menu.querySelectorAll(".card-body");
+
+  let currentCharacter = null;
+
+  characters.forEach(character => {
+    character.addEventListener("click", (e) => {
+
+      // если уже открыто на этом же персонаже то закрываем
+      if (menu.style.display === "block" && currentCharacter === character) {
+        closeMenu();
+        return;
+      }
+
+      currentCharacter = character;
+      openMenu(character);
+    });
+  });
+
+  function openMenu(character) {
+    menu.style.display = "block";
+    $(".sidebar-left").hide();
+
+    if (window.innerWidth > 768) {
+      const rect = character.getBoundingClientRect();
+      const menuWidth = 578;
+
+      const spaceRight = window.innerWidth - rect.right;
+      const spaceLeft = rect.left;
+
+      if (spaceRight > spaceLeft) {
+        menu.style.left = rect.right + 10 + "px";
+      } else {
+        menu.style.left = rect.left - menuWidth - 20 + "px";
+      }
+
+      menu.style.top = rect.top + "px";
+    }
+  }
+
+  function closeMenu() {
+    menu.style.display = "none";
+    currentCharacter = null;
+    $(".sidebar-left").show();
+  }
+
+  /* ==== Фильтрация ==== */
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+
+      document.querySelector(".tab.active").classList.remove("active");
+      tab.classList.add("active");
+
+      const filter = tab.dataset.filter;
+
+      cards.forEach(card => {
+        if (filter === "all" || card.dataset.rarity === filter) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  });
+
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      if (currentCharacter) {
+        const position = currentCharacter.dataset.position;
+        team[position].id = card.dataset.id;
+        closeMenu();
+        renderTeamData(team);
+      }
+    });
+  });
+
+  // перемещение меню вместе со скроллом
+  window.addEventListener("scroll", () => {
+    if (currentCharacter) openMenu(currentCharacter);
+  }, true);
+}
+
+function renderTeamData(team) {
+  team = checkTeamDuplicates(team);
+  team = checkBondsCount(team);
   var teamDataHtml = "";
   for (position in team) {
     const teamMember = team[position];
@@ -128,11 +304,13 @@ function renderTeamData() {
     }
     if (teamMember?.id) {
       const { id, bonds } = teamMember;
-      teamDataHtml += getCharacterHtml(id, bonds, position);
+      teamDataHtml += getCharacterHtml(getCharacterById(id), bonds, position);
     }
   }
   const stageElement = document.querySelector(".stage");
   stageElement.innerHTML = teamDataHtml;
+  renderRightSidebar(team);
+  renderSwapMenu();
 }
 
 function getCharacterClassImagePath(character) {
@@ -152,31 +330,21 @@ function getCharacterClassImagePath(character) {
   }
 }
 
-function renderRightSidebar(){
-    const sidebar = document.querySelector(".sidebar-right");
-    var sidebarHtml = "";
-    for (position in team) {
-      teamMember = team[position];
-      if (teamMember?.id) {
-        const { id, bonds } = teamMember;
-        const character = getCharacterById(id);
-        sidebarHtml += `<div class="hero-thumb">
+function renderRightSidebar(team) {
+  var sidebarHtml = `<div class="sidebar-right">`;
+  for (position in team) {
+    teamMember = team[position];
+    if (teamMember?.id) {
+      const { id, bonds } = teamMember;
+      const character = getCharacterById(id);
+      sidebarHtml += `<div class="hero-thumb">
           <img src="${character.getImagePath()}" alt="${id}" /><span>8/8</span>
         </div>`;
-      }
     }
-    sidebar.innerHTML = sidebarHtml;
-}
-
-$().ready(() => {
-  // horizontal scroll
-  const stage = document.querySelector(".stage");
-  stage.addEventListener("wheel", (e) => {
-    if (e.deltaY !== 0) {
-      e.preventDefault();
-      stage.scrollLeft += e.deltaY;
-    }
-  });
+  }
+  sidebarHtml += `</div>`;
+  const stageElement = document.querySelector(".stage");
+  stageElement.innerHTML += sidebarHtml;
 
   const toggleBtn = document.querySelector(".right-sidebar-toggle");
   const sidebar = document.querySelector(".sidebar-right");
@@ -190,7 +358,36 @@ $().ready(() => {
       sidebar.classList.remove("open");
     }
   });
+}
 
-  renderTeamData();
-  renderRightSidebar();
+$().ready(() => {
+  $(".stage-btn").on("click", function () {
+    if ($(this).hasClass("active")) {
+      return;
+    }
+    $(".menu-btn").removeClass("active");
+    $(this).addClass("active");
+    renderTeamData(team);
+  });
+
+  $(".album-btn").on("click", function () {
+    $(".menu-btn").removeClass("active");
+    $(this).addClass("active");
+  });
+
+  $(".bonds-btn").on("click", function () {
+    $(".menu-btn").removeClass("active");
+    $(this).addClass("active");
+  });
+
+  // horizontal scroll
+  const stage = document.querySelector(".stage");
+  stage.addEventListener("wheel", (e) => {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      stage.scrollLeft += e.deltaY;
+    }
+  });
+
+  renderTeamData(team);
 });

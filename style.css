@@ -163,8 +163,9 @@ body {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.menu-btn:hover {
-    transform: translateX(5px);
+.active {
+    color: #fff;
+    background: #5286da
 }
 
 .menu-btn i {
@@ -178,8 +179,8 @@ body {
     right: 0;
     justify-content: center;
 
-    z-index: 90;
-    
+    z-index: 1001;
+
     display: flex;
     flex-direction: column;
     width: clamp(30px, 5vw, 90px);
@@ -341,37 +342,6 @@ body {
     transform: skewX(15deg);
 }
 
-.attribute-wheel {
-    position: absolute;
-    bottom: 3vh;
-    left: 3vw;
-    width: clamp(60px, 12vh, 100px);
-    height: clamp(60px, 12vh, 100px);
-    background: conic-gradient(#ef4444 0 90deg, #3b82f6 90deg 180deg, #fbbf24 180deg 270deg, #10b981 270deg 360deg);
-    border-radius: 50%;
-    border: 4px solid white;
-    transform: rotate(45deg);
-    z-index: 100;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-    cursor: pointer;
-    transition: transform 0.5s;
-}
-
-.attribute-wheel:hover {
-    transform: rotate(225deg);
-}
-
-.attribute-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    color: white;
-    font-weight: bold;
-    font-size: 2vh;
-    text-shadow: 1px 1px 2px black;
-    pointer-events: none;
-}
 
 .character-component:hover {
     transform: translateY(-5px) scale(1.01);
@@ -380,6 +350,7 @@ body {
 
 .character-component {
     width: var(--base-width);
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -389,6 +360,8 @@ body {
 
 .card-body {
     position: relative;
+    container-type: size;
+    aspect-ratio: 1 / 1.53;
     width: 100%;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     background: #000;
@@ -405,7 +378,7 @@ body {
     width: 100%;
     aspect-ratio: 1 / 1.25;
     overflow: hidden;
-    padding: calc(7px * var(--scale));
+    padding: calc(6px * var(--scale));
     justify-items: center;
 }
 
@@ -418,28 +391,20 @@ body {
 }
 
 .tier-block {
-    height: calc(104px * var(--scale));
     display: flex;
     align-items: center;
     padding: 0 calc(38px * var(--scale));
     position: relative;
-    padding-bottom: calc(20px * var(--scale));
-}
-
-.tier-block::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 30%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.2);
-    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
+    padding-bottom: calc(10px * var(--scale));
+    aspect-ratio: 1/0.27;
+    overflow: hidden;
+    container-type: size;
 }
 
 .tier-text {
+    width: 50%;
     color: white;
-    font-size: calc(4.7rem * var(--scale));
+    font-size: 100cqh;
     font-weight: 500;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
     z-index: 1;
@@ -510,10 +475,72 @@ body {
 .class-icon {
     position: absolute;
     top: calc(-15px * var(--scale));
-    left: calc(-45px * var(--scale));
-    width: calc(90px * var(--scale));
+    left: calc(-15px * var(--scale));
+    width: 18cqh;
     height: auto;
 
     z-index: 5;
     pointer-events: none;
+}
+
+.swap-menu {
+    position: fixed;
+    width: 350px * var(--scale);
+    display: none;
+    z-index: 1000;
+}
+
+.menu-content {
+    width: auto;
+    background: whitesmoke;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.tab {
+    flex: 1;
+    padding: 6px;
+    border: none;
+    cursor: pointer;
+    background: #eee;
+    border-radius: 6px;
+}
+
+.tab.active {
+    background: #4CAF50;
+    color: white;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, calc(200px * var(--scale)));
+    gap: 10px;
+}
+
+.menu-title {
+    align-self: center;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+    .swap-menu {
+        position: fixed;
+        inset: 0;
+        background: white;
+        display: none;
+        padding: 20px;
+    }
+
+    .menu-content {
+        width: 100%;
+        box-shadow: none;
+    }
 }
