@@ -12,9 +12,10 @@ function getCharacterById(characterId) {
 }
 
 class Character {
-  constructor(id, name, img, rarity, classType, baseStats, bonds) {
+  constructor(id, name, nameEn, img, rarity, classType, baseStats, bonds) {
     this.id = id;
     this.name = name;
+    this.nameEn = nameEn;
     this.img = img;
     this.rarity = rarity;
     this.classType = classType;

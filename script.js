@@ -191,7 +191,8 @@ function getCharacterHtml(character, bonds, position) {
 function renderSwapMenu() {
   const swapMenuHtml = `
     <div class="swap-menu" id="swapMenu">
-      <div class="menu-content">
+    <div class="menu-content">
+    <div class="swap-menu-close">X</div>
       <div class="menu-title">Заменить</div>
         <div class="tabs">
           <button data-filter="all" class="tab active">Все</button>
@@ -232,8 +233,8 @@ function renderSwapMenu() {
 
   function openMenu(character) {
     menu.style.display = "block";
-    $(".sidebar-left").hide();
-
+    
+    
     if (window.innerWidth > 768) {
       const rect = character.getBoundingClientRect();
       const menuWidth = 578;
@@ -249,6 +250,9 @@ function renderSwapMenu() {
 
       menu.style.top = rect.top + "px";
     }
+    else{
+      $(".sidebar-left").hide();
+    }
   }
 
   function closeMenu() {
@@ -257,7 +261,6 @@ function renderSwapMenu() {
     $(".sidebar-left").show();
   }
 
-  /* ==== Фильтрация ==== */
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
 
@@ -268,7 +271,7 @@ function renderSwapMenu() {
 
       cards.forEach(card => {
         if (filter === "all" || card.dataset.rarity === filter) {
-          card.style.display = "block";
+          card.style.display = "flex";
         } else {
           card.style.display = "none";
         }
@@ -291,6 +294,10 @@ function renderSwapMenu() {
   window.addEventListener("scroll", () => {
     if (currentCharacter) openMenu(currentCharacter);
   }, true);
+
+  document.querySelector(".swap-menu-close").addEventListener("click", () => {
+    closeMenu();
+  });
 }
 
 function renderTeamData(team) {
@@ -319,14 +326,14 @@ function getCharacterClassImagePath(character) {
       return "images/classes/agility.png";
     case "strength":
       return "images/classes/strength.png";
-    case "support":
-      return "images/classes/support.png";
+    case "skill":
+      return "images/classes/skill.png";
     case "agility-mod":
       return "images/classes/agility-mod.png";
     case "strength-mod":
       return "images/classes/strength-mod.png";
-    case "support-mod":
-      return "images/classes/support-mod.png";
+    case "skill-mod":
+      return "images/classes/skill-mod.png";
   }
 }
 
